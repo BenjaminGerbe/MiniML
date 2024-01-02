@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\benja\Desktop\Opengl\libs\MLgine\MLgine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\benja\Desktop\Opengl\libs\MLgine\build\CMakeFiles\3.27.0-rc4\CompilerIdCXX\CMakeCXXCompilerId.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\benja\Desktop\Opengl\libs\MLgine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{06493782-00D1-32A5-8CE3-EF2BFC2D23F6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
