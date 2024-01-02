@@ -1,9 +1,0 @@
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/Experimental.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/Nightly.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/Continuous.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/NightlyMemoryCheck.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/MLgine.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/PACKAGE.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/RUN_TESTS.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/benja/Desktop/Opengl/libs/MLgine/build/CMakeFiles/ZERO_CHECK.dir
