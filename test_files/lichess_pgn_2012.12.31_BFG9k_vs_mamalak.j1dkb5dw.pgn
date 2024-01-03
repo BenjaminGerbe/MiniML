@@ -1,0 +1,22 @@
+[Event "Rated Rapid game"]
+[Site "https://lichess.org/j1dkb5dw"]
+[Date "2012.12.31"]
+[White "BFG9k"]
+[Black "mamalak"]
+[Result "1-0"]
+[UTCDate "2012.12.31"]
+[UTCTime "23:01:03"]
+[WhiteElo "1639"]
+[BlackElo "1403"]
+[WhiteRatingDiff "+5"]
+[BlackRatingDiff "-8"]
+[Variant "Standard"]
+[TimeControl "600+8"]
+[ECO "C00"]
+[Opening "French Defense: Normal Variation"]
+[Termination "Normal"]
+[Annotator "lichess.org"]
+
+1. e4 { [%eval 0.18] } 1... e6 { [%eval 0.18] } 2. d4 { [%eval 0.2] } { C00 French Defense: Normal Variation } 2... b6?! { (0.20 → 0.76) Inaccuracy. d5 was best. } { [%eval 0.76] } (2... d5 3. Nc3 Bb4 4. exd5 exd5 5. Bd3 Nf6 6. Ne2 O-O 7. O-O c6 8. Bf4 Re8 9. Ng3) 3. a3 { [%eval 0.29] } 3... Bb7 { [%eval 0.22] } 4. Nc3 { [%eval 0.22] } 4... Nh6? { (0.22 → 1.39) Mistake. d5 was best. } { [%eval 1.39] } (4... d5) 5. Bxh6?! { (1.39 → 0.82) Inaccuracy. Nf3 was best. } { [%eval 0.82] } (5. Nf3 Ng4 6. e5 Be7 7. Bd3 d6 8. h3 Nh6 9. Bxh6 gxh6 10. O-O Nd7 11. Be4 d5) 5... gxh6 { [%eval 0.76] } 6. Be2 { [%eval 0.49] } 6... Qg5?! { (0.49 → 1.09) Inaccuracy. Bg7 was best. } { [%eval 1.09] } (6... Bg7 7. Nf3 Nc6 8. Qd2 Ne7 9. O-O-O O-O 10. Qe3 d5 11. Bd3 dxe4 12. Bxe4 Bxe4 13. Nxe4) 7. Bg4?! { (1.09 → 0.33) Inaccuracy. Nf3 was best. } { [%eval 0.33] } (7. Nf3 Qg7) 7... h5 { [%eval 0.35] } 8. Nf3?? { (0.35 → -3.36) Blunder. Bf3 was best. } { [%eval -3.36] } (8. Bf3 Nc6 9. h4 Qh6 10. Nge2 O-O-O 11. Qd3 Kb8 12. Ng3 d5 13. exd5 exd5 14. Nce2 Qg6) 8... Qg6?? { (-3.36 → 1.03) Blunder. Qxg4 was best. } { [%eval 1.03] } (8... Qxg4 9. h3 Qg7 10. Qe2 Ba6 11. Qe3 Nc6 12. g4 e5 13. dxe5 O-O-O 14. Qf4 Re8 15. O-O-O) 9. Nh4?? { (1.03 → -4.21) Blunder. Ne5 was best. } { [%eval -4.21] } (9. Ne5 Qg7 10. Bxh5 Qxg2 11. Rf1 Ba6 12. Be2 Bd6 13. Bxa6 Nxa6 14. Nf3 Bxh2 15. Qd3 Nb8) 9... Qg5? { (-4.21 → -2.20) Mistake. Qxg4 was best. } { [%eval -2.2] } (9... Qxg4 10. Qxg4 hxg4 11. h3 h5 12. O-O-O Nc6 13. g3 O-O-O 14. Ng2 Bg7 15. d5 exd5 16. exd5) 10. Bxh5 { [%eval -2.16] } 10... Qxh4 { [%eval -2.13] } 11. Qf3 { [%eval -2.0] } 11... Kd8 { [%eval -1.49] } 12. Qxf7 { [%eval -1.58] } 12... Nc6?? { (-1.58 → Mate in 1) Checkmate is now unavoidable. Qe7 was best. } { [%eval #1] } (12... Qe7 13. Qf3 Bg7 14. Rd1 Nc6 15. e5 Rf8 16. Qg3 Bh6 17. Bf3 a5 18. Qh3 Qg7 19. O-O) 13. Qe8# { White wins by checkmate. } 1-0
+
+
