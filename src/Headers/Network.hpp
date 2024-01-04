@@ -2,105 +2,125 @@
 #include <vector>
 #include <time.h> 
 #include <stdexcept>
+#include "Eigen/Dense"
+#include <iostream>
+#include  <cmath>
 class Network{
-    std::vector<std::vector<float>> layer; 
-    std::vector<std::vector<std::vector<float>>> wieght; 
+    std::vector<Eigen::MatrixXd> layer; 
+    std::vector<Eigen::MatrixXd> delta; 
+    std::vector<std::vector<Eigen::MatrixXd>> wieght; 
 
     public: 
     Network(int nbInput,int nbCouche,int nboutput){
         std::srand(time(NULL)); // random seed
-        std::vector<float> input;
-        for (int i = 0; i < nbInput; i++)
-        {
-            float r = (((double) rand() / (RAND_MAX))*2.0f)-1.0f;
-            input.push_back(r);
+        Eigen::MatrixXd input(nbInput+1,1);
+        for (int i = 0; i < nbInput; i++){
+            input(i,0) = (0);
         }
-        input.push_back(1); // biais
+
+        input(nbInput,0) = 1; // biais
         layer.push_back(input);
-        std::vector<std::vector<float>> thisLayer;
+
+       
         for (int i = 0; i < nbCouche; i++)
         {
-            std::vector<float> hidden;
-            hidden.clear();
-            thisLayer.clear();
+            int n = nbInput;
+            if(i == nbCouche -1){
+                n++;
+            }
+            Eigen::MatrixXd hidden(n,1);
+            std::vector<Eigen::MatrixXd> layerweight;
             for (int j = 0; j < nbInput; j++)
             {
-                std::vector<float> wNeurone;
-                hidden.push_back(0);
-                int size = GetLayerSize(i); // i is here the current layer - 1
-                if(i == 0 || i == GetNetworkSize()-1){
-                    size++;
-                }
-                
-                for (int k = 0; k < size; k++)
+                hidden(j,0) = 0;
+                Eigen::MatrixXd thisLayer(1,n);
+     
+                for (int k = 0; k < GetLayerSize(i); k++)
                 {
                     float r = (((double) rand() / (RAND_MAX))*2.0f)-1.0f;
-                    wNeurone.push_back(r);
+                    thisLayer(0,k) = r;
                 }
-                
-                thisLayer.push_back(wNeurone);
+
+                layerweight.push_back(thisLayer);
             }
            
             if(i == nbCouche -1){
-                hidden.push_back(1); // biais
+                hidden(nbInput,0) = 1;
             }
-            wieght.push_back(thisLayer);
+            wieght.push_back(layerweight);
             layer.push_back(hidden);
         }
         
 
-        thisLayer.clear();
-        std::vector<float> output;
+        Eigen::MatrixXd thisLayer(1,GetLayerSize(layer.size()-1));
+        std::vector<Eigen::MatrixXd> ouputVec;
+        Eigen::MatrixXd output(nboutput,1);
         for (int i = 0; i < nboutput; i++)
         {
-            std::vector<float> wNeurone;
-            output.push_back(0);
-            int size = GetLayerSize(layer.size()-1)+1;
-            for (int j = 0; j < size; j++)
+            output(i,0) = 0;
+            for (int j = 0; j < GetLayerSize(layer.size()-1); j++)
             {
                 float r = (((double) rand() / (RAND_MAX))*2.0f)-1.0f;
-                wNeurone.push_back(r);
+                thisLayer(0,j) = r;
             }
-            thisLayer.push_back(wNeurone);
+            ouputVec.push_back(thisLayer);
         }
-        wieght.push_back(thisLayer);
+
+        wieght.push_back(ouputVec);
         layer.push_back(output);
+
+        // initalize delta
+        for (int i = 0; i < layer.size(); i++)
+        {
+            Eigen::MatrixXd m(GetLayerSize(i),1);
+            for (int j = 0; j < GetLayerSize(i); j++)
+            {
+                m(j,0) = 0;
+            }
+            std::cout << m << std::endl;
+            delta.push_back(m);
+        }
     }
     
     Network(std::vector<float> input,  std::vector<std::vector<std::vector<float>>> w,int heidden,int output):Network(input.size(),heidden,output){
-        for (int i = 0; i < input.size(); i++)
-        {
-            layer[0][i] = input[i];
-        }
+        // for (int i = 0; i < input.size(); i++)
+        // {
+        //     layer[0][i] = input[i];
+        // }
 
-        for (int i = 0; i < w.size(); i++)
-        {
-            for (int j = 0; j < w[i].size(); j++)
-            {
-                for (int k = 0; k < w[i][j].size(); k++)
-                {
-                    this->wieght[i][j][k] = w[i][j][k];
-                }
-            }
-        }
+        // for (int i = 0; i < w.size(); i++)
+        // {
+        //     for (int j = 0; j < w[i].size(); j++)
+        //     {
+        //         for (int k = 0; k < w[i][j].size(); k++)
+        //         {
+        //             this->wieght[i][j][k] = w[i][j][k];
+        //         }
+        //     }
+        // }
         
     }
 
-    float GetValue(int l,int i){ return layer[l][i]; };
+    float GetValue(int l,int i){ return layer[l](i,0); };
     float Network::GetWeight(int l,int i,int j){
         int idx = l-1; // beceause the layer of the input is not added
         if(idx < 0 || idx >= GetNetworkSize()){
             return 0.0f;
         }
-        return wieght[idx][i][j];
+        return wieght[idx][i](0,j);
     }
 
     
     int GetLayerSize(int l){
         if( l < 0 || l >= layer.size()) return 0;
-        return l == 0 || l == layer.size()-2 ?  layer[l].size() -1 : layer[l].size(); 
+        return layer[l].rows(); 
     }
-    std::vector<std::vector<float>> GetLayer(){ return this->layer;};
+
+    int GetLayerRealSize(int l){
+        if( l < 0 || l >= layer.size()) return 0;
+        return l==0 || l == GetNetworkSize()-2 ? layer[l].rows() -1 : layer[l].rows(); 
+    }
+    std::vector<Eigen::MatrixXd> GetLayer(){ return this->layer;};
 
     int GetNetworkSize(){ return layer.size();}
     void Network::SetWeight(int l,int i,int j,float v){
@@ -108,7 +128,73 @@ class Network{
         if(idx < 0){
             throw std::invalid_argument( "the value of l can't be 0 beceause the input 0 layer is the input and input don't recieve wieght from precedent layer");
         }
-        wieght[idx][i][j] = v;
+        wieght[idx][i](0,j)= v;
     }
     
+    float simulate(std::vector<float> input){
+        
+        for (int i = 0; i < GetLayerRealSize(0); i++)
+        {
+            layer[0](i,0) = input[i];
+        }
+
+        return NetWorkProcess(GetNetworkSize()-1,0);
+    }
+
+    float sigmoid(float a){
+        return std::tanh(a);
+    }
+
+    float NetWorkProcess(int l,int j){
+        float a = 0.0;
+
+        if(l-1 > 0){
+            for (int d = 0; d < GetLayerRealSize(l-1); d++)
+            {
+                layer[l-1](d,0) = NetWorkProcess(l-1,d);
+            }
+        }
+        return sigmoid((this->wieght[l-1][j]*layer[l-1])(0,0));
+    }
+
+    void backPropagation(std::vector<std::vector<float>> input,std::vector<float> output,float a,int max_it){
+        for (int it = 0; it < max_it; it++)
+        {
+            int idx = rand() % input.size();
+            float value = simulate(input[idx]);
+            float d = (1-(value*value))*(value - output[idx]);
+            for (int i = 0; i < GetLayerRealSize(GetNetworkSize()-1); i++)
+            {
+                this->delta[GetNetworkSize()-1](i,0) = d;
+            }
+            
+            for (int i = GetNetworkSize()-2; i >= 0; i--)
+            {
+                for (int j = 0; j < GetLayerRealSize(i); j++)
+                {
+                    float a = 0.0;
+                    for (int k = 0; k < GetLayerRealSize(i+1); k++)
+                    {
+                        a += GetWeight(i+1,k,j)*delta[i+1](k,0);
+                    }
+                    delta[i](j,0) = (1-(layer[i](j,0)*layer[i](j,0)))*a;
+                }
+                
+            }
+            
+            for (int i = 0; i < GetNetworkSize()-1; i++)
+            {
+                for (int j = 0; j < GetLayerSize(i); j++)
+                {
+                    for (int k = 0; k < GetLayerRealSize(i+1); k++)
+                    {
+                        float v = GetWeight(i+1,k,j) - a*layer[i](j,0)*delta[i+1](k,0);
+                        SetWeight(i+1,k,j,v);
+                    }
+                    
+                }
+                
+            }
+        }
+    }
 };

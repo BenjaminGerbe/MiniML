@@ -17,6 +17,8 @@ namespace MiniML{
         net->SetWeight(2,0,0,1);
         net->SetWeight(2,0,1,1);
         net->SetWeight(2,0,2,-1.5);
+
+
         return net;
     }
 }   
