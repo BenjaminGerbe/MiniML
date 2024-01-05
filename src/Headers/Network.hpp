@@ -9,9 +9,16 @@ class Network{
     std::vector<Eigen::MatrixXd> layer; 
     std::vector<Eigen::MatrixXd> delta; 
     std::vector<std::vector<Eigen::MatrixXd>> wieght; 
-
+    std::vector<std::vector<float>> Error;
     public: 
-    Network(int nbInput,int nbCouche,int nboutput){
+    Network(int nbInput,int nbHidden,int nboutput){
+        std::vector<float> e;
+        std::vector<float> t;
+        t.push_back(0);
+        e.push_back(1);
+        Error.push_back(e);
+        Error.push_back(t);
+
         std::srand(time(NULL)); // random seed
         Eigen::MatrixXd input(nbInput+1,1);
         for (int i = 0; i < nbInput; i++){
@@ -21,19 +28,23 @@ class Network{
         input(nbInput,0) = 1; // biais
         layer.push_back(input);
 
-       
+        float vs =((float)nbHidden)/(float)nbInput;
+        int nbCouche = std::ceil(vs);
+        int p = nbHidden;
         for (int i = 0; i < nbCouche; i++)
         {
-            int n = nbInput;
-            if(i == nbCouche -1){
-                n++;
+            int n = p;
+            if (p > nbInput)
+            {
+                n = nbInput;
             }
-            Eigen::MatrixXd hidden(n,1);
+
+            Eigen::MatrixXd hidden(n+ (i== nbCouche-1 ? 1 : 0),1);//add one if he need bias
             std::vector<Eigen::MatrixXd> layerweight;
-            for (int j = 0; j < nbInput; j++)
+            for (int j = 0; j < n; j++)
             {
                 hidden(j,0) = 0;
-                Eigen::MatrixXd thisLayer(1,n);
+                Eigen::MatrixXd thisLayer(1,GetLayerSize(i)  );
      
                 for (int k = 0; k < GetLayerSize(i); k++)
                 {
@@ -43,9 +54,9 @@ class Network{
 
                 layerweight.push_back(thisLayer);
             }
-           
+            p -= n;
             if(i == nbCouche -1){
-                hidden(nbInput,0) = 1;
+                hidden(n,0) = 1;
             }
             wieght.push_back(layerweight);
             layer.push_back(hidden);
@@ -158,6 +169,9 @@ class Network{
     }
 
     void backPropagation(std::vector<std::vector<float>> input,std::vector<float> output,float a,int max_it){
+    
+        float error = 0.0;
+            
         for (int it = 0; it < max_it; it++)
         {
             int idx = rand() % input.size();
@@ -167,7 +181,8 @@ class Network{
             {
                 this->delta[GetNetworkSize()-1](i,0) = d;
             }
-            
+            error += std::abs(d);
+        
             for (int i = GetNetworkSize()-2; i >= 0; i--)
             {
                 for (int j = 0; j < GetLayerRealSize(i); j++)
@@ -196,5 +211,14 @@ class Network{
                 
             }
         }
+
+        Error[0].push_back(error/max_it);
+        float t = Error[1][Error[1].size()-1]+1;
+        Error[1].push_back(t);
+
+    }
+
+    std::vector<std::vector<float>> GetError(){
+        return this->Error;
     }
 };
