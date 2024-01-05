@@ -4,8 +4,8 @@
 #include "Eigen/Dense"
 
 namespace MiniML{
-    Network* setupXor(int i,int y,int z){
-        Network* net = new Network(i,y,z);
+    Network* setupXor(int i,int y,int h,int z){
+        Network* net = new Network(i,y,h,z);
         return net;
     }
 }   

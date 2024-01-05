@@ -11,7 +11,7 @@ class Network{
     std::vector<std::vector<Eigen::MatrixXd>> wieght; 
     std::vector<std::vector<float>> Error;
     public: 
-    Network(int nbInput,int nbHidden,int nboutput){
+    Network(int nbInput,int nbHidden,int heightHidden,int nboutput){
         std::vector<float> e;
         std::vector<float> t;
         t.push_back(0);
@@ -28,15 +28,15 @@ class Network{
         input(nbInput,0) = 1; // biais
         layer.push_back(input);
 
-        float vs =((float)nbHidden)/(float)nbInput;
+        float vs =((float)nbHidden)/(float)heightHidden;
         int nbCouche = std::ceil(vs);
         int p = nbHidden;
         for (int i = 0; i < nbCouche; i++)
         {
             int n = p;
-            if (p > nbInput)
+            if (p > heightHidden)
             {
-                n = nbInput;
+                n = heightHidden;
             }
 
             Eigen::MatrixXd hidden(n+ (i== nbCouche-1 ? 1 : 0),1);//add one if he need bias
@@ -93,7 +93,7 @@ class Network{
         }
     }
     
-    Network(std::vector<float> input,  std::vector<std::vector<std::vector<float>>> w,int heidden,int output):Network(input.size(),heidden,output){
+    Network(std::vector<float> input,  std::vector<std::vector<std::vector<float>>> w,int heidden,int heightHidden,int output):Network(input.size(),heidden,heightHidden,output){
         // for (int i = 0; i < input.size(); i++)
         // {
         //     layer[0][i] = input[i];
