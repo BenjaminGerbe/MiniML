@@ -10,8 +10,9 @@ class Network{
     std::vector<Eigen::MatrixXd> delta; 
     std::vector<std::vector<Eigen::MatrixXd>> wieght; 
     std::vector<std::vector<float>> Error;
+    bool Regression;
     public: 
-    Network(int nbInput,int nbHidden,int heightHidden,int nboutput){
+    Network(int nbInput,int nbHidden,int heightHidden,int nboutput,bool _regression):Regression(_regression){
         std::vector<float> e;
         std::vector<float> t;
         t.push_back(0);
@@ -63,7 +64,7 @@ class Network{
         }
         
 
-        Eigen::MatrixXd thisLayer(1,GetLayerSize(layer.size()-1));
+        Eigen::MatrixXd thisLayer(nboutput,GetLayerSize(layer.size()-1));
         std::vector<Eigen::MatrixXd> ouputVec;
         Eigen::MatrixXd output(nboutput,1);
         for (int i = 0; i < nboutput; i++)
@@ -72,7 +73,7 @@ class Network{
             for (int j = 0; j < GetLayerSize(layer.size()-1); j++)
             {
                 float r = (((double) rand() / (RAND_MAX))*2.0f)-1.0f;
-                thisLayer(0,j) = r;
+                thisLayer(i,j) = r;
             }
             ouputVec.push_back(thisLayer);
         }
@@ -93,7 +94,7 @@ class Network{
         }
     }
     
-    Network(std::vector<float> input,  std::vector<std::vector<std::vector<float>>> w,int heidden,int heightHidden,int output):Network(input.size(),heidden,heightHidden,output){
+    Network(std::vector<float> input,  std::vector<std::vector<std::vector<float>>> w,int heidden,int heightHidden,int output,bool _regression):Network(input.size(),heidden,heightHidden,output,_regression){
         // for (int i = 0; i < input.size(); i++)
         // {
         //     layer[0][i] = input[i];
@@ -142,14 +143,28 @@ class Network{
         wieght[idx][i](0,j)= v;
     }
     
-    float simulate(std::vector<float> input){
-        
+    std::vector<float> simulate(std::vector<float> input){
+
+        std::vector<float> v;
+        int l = GetNetworkSize();
         for (int i = 0; i < GetLayerRealSize(0); i++)
         {
             layer[0](i,0) = input[i];
         }
 
-        return NetWorkProcess(GetNetworkSize()-1,0);
+        NetWorkProcess(l-1,0);
+        for (int i = 0; i < GetLayerSize(l-1); i++)
+        {
+            if(Regression){
+                layer[l-1](i,0) =(this->wieght[l-2][i]*layer[l-2])(0,0);
+            }
+            else{
+                layer[l-1](i,0) = sigmoid((this->wieght[l-2][i]*layer[l-2])(0,0));
+            }
+            v.push_back(layer[l-1](i,0));
+        }
+
+        return v;
     }
 
     float sigmoid(float a){
@@ -168,21 +183,28 @@ class Network{
         return sigmoid((this->wieght[l-1][j]*layer[l-1])(0,0));
     }
 
-    void backPropagation(std::vector<std::vector<float>> input,std::vector<float> output,float a,int max_it){
+    void backPropagation(std::vector<std::vector<float>> input,std::vector<std::vector<float>> output,float a,int max_it){
     
         float error = 0.0;
             
         for (int it = 0; it < max_it; it++)
         {
             int idx = rand() % input.size();
-            float value = simulate(input[idx]);
-            float d = (1-(value*value))*(value - output[idx]);
-            for (int i = 0; i < GetLayerRealSize(GetNetworkSize()-1); i++)
+            simulate(input[idx]);
+            float err=0.0f;
+            int w  = GetLayerRealSize(GetNetworkSize()-1);
+            for (int i = 0; i <w; i++)
             {
+                float value = layer[GetNetworkSize()-1](i,0);
+                float b=1.0;
+                if(!Regression){
+                    b = (1-(value*value));
+                }
+                float d = b*(value - output[idx][i%output[idx].size()]);
                 this->delta[GetNetworkSize()-1](i,0) = d;
+                err+=std::abs(value - output[idx][i%output[idx].size()]);
             }
-            error += std::abs(d);
-        
+            error+= err/GetLayerRealSize(GetNetworkSize()-1);
             for (int i = GetNetworkSize()-2; i >= 0; i--)
             {
                 for (int j = 0; j < GetLayerRealSize(i); j++)
