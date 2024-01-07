@@ -1,10 +1,10 @@
 import chess
 import chess.pgn
 
-max_games = 5
+max_games = 2
 incr = 0
 
-pgn_path = "../test_files/lichess_pgn_2012.12.31_BFG9k_vs_mamalak.j1dkb5dw.pgn"
+pgn_path = "../test_files/test_evals_500.pgn"
 pgn_file = open(pgn_path)
 
 for game in iter(lambda: chess.pgn.read_game(pgn_file), None):

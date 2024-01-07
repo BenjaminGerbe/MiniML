@@ -1,0 +1,20 @@
+[Event "Rated Classical game"]
+[Site "https://lichess.org/j1dkb5dw"]
+[Date "2024.01.07"]
+[White "BFG9k"]
+[Black "mamalak"]
+[Result "1-0"]
+[UTCDate "2012.12.31"]
+[UTCTime "23:01:03"]
+[WhiteElo "1639"]
+[BlackElo "1403"]
+[Variant "Standard"]
+[TimeControl "600+8"]
+[ECO "C00"]
+[Opening "French Defense: Normal Variation"]
+[Termination "Normal"]
+[Annotator "lichess.org"]
+
+1. e4 { [%eval 0.2] [%clk 0:11:28] } 1... e6 { [%eval 0.0] } 2. d4 { [%eval 0.3] } { C00 French Defense: Normal Variation } 2... b6?! { (0.30 → 1.01) Inaccuracy. d5 was best. } { [%eval 1.01] } (2... d5 3. Nc3 Nf6 4. e5 Nfd7 5. f4 c5 6. Nf3 Nc6 7. Be3) 3. a3 { [%eval 0.85] } 3... Bb7 { [%eval 0.85] } 4. Nc3 { [%eval 0.66] } 4... Nh6?! { (0.66 → 1.47) Inaccuracy. d5 was best. } { [%eval 1.47] } (4... d5 5. exd5 exd5 6. Qf3 Nc6 7. Be3 Qd7 8. Bd3 g6 9. Nge2) 5. Bxh6 { [%eval 1.32] } 5... gxh6 { [%eval 1.26] } 6. Be2?! { (1.26 → 0.65) Inaccuracy. Qd2 was best. } { [%eval 0.65] } (6. Qd2 d6 7. Nge2 Nd7 8. O-O-O a6 9. d5 Bg7 10. Nf4 Qe7 11. Bc4 Bxc3 12. Qxc3 e5) 6... Qg5?! { (0.65 → 1.29) Inaccuracy. Bg7 was best. } { [%eval 1.29] } (6... Bg7) 7. Bg4?! { (1.29 → 0.48) Inaccuracy. Nf3 was best. } { [%eval 0.48] } (7. Nf3) 7... h5 { [%eval 0.6] } 8. Nf3?? { (0.60 → -4.13) Blunder. Bh3 was best. } { [%eval -4.13] } (8. Bh3 Bg7 9. Nf3 Qg6 10. g3 Nc6 11. O-O Qh6 12. Bg2 O-O 13. Re1 Ne7 14. Qd3 Rab8) 8... Qg6?? { (-4.13 → 1.07) Blunder. Qxg4 was best. } { [%eval 1.07] } (8... Qxg4 9. h3 Qg7 10. Qd3 Nc6 11. d5 Ne5 12. Nxe5 Qxe5 13. O-O-O O-O-O 14. Kb1 Qg7 15. g3) 9. Nh4?? { (1.07 → -4.82) Blunder. Ne5 was best. } { [%eval -4.82] } (9. Ne5 Qg7) 9... Qg5? { (-4.82 → -2.73) Mistake. Qxg4 was best. } { [%eval -2.73] } (9... Qxg4 10. Qxg4 hxg4 11. h3 h5 12. O-O-O Na6 13. f4 gxf3 14. Nxf3 Be7 15. Kb1 h4 16. Rdf1) 10. Bxh5 { [%eval -2.65] } 10... Qxh4 { [%eval -2.7] } 11. Qf3 { [%eval -2.66] } 11... Kd8 { [%eval -2.1] } 12. Qxf7 { [%eval -2.23] } 12... Nc6?? { (-2.23 → Mate in 1) Checkmate is now unavoidable. Be7 was best. } { [%eval #1] } (12... Be7 13. O-O Nc6 14. Rad1 Ba6 15. g3 Qg5 16. Be2 Bxe2 17. Nxe2 Kc8 18. Nc3 a5 19. Kg2) 13. Qe8# { White wins by checkmate. } 1-0
+
+
