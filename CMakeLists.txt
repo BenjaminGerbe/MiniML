@@ -10,7 +10,7 @@ file(GLOB_RECURSE Classes
 include(CTest)
 enable_testing()
 
-add_library(MiniML ${Classes} )
+add_library(MiniML SHARED ${Classes} )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

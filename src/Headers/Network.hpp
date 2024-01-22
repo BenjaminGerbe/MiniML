@@ -2,7 +2,7 @@
 #include <vector>
 #include <time.h> 
 #include <stdexcept>
-#include "Eigen/Dense"
+#include "../Eigen/Dense"
 #include <iostream>
 #include  <cmath>
 class Network{
