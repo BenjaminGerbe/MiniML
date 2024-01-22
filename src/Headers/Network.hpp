@@ -9,16 +9,15 @@ class Network{
     std::vector<Eigen::MatrixXd> layer; 
     std::vector<Eigen::MatrixXd> delta; 
     std::vector<std::vector<Eigen::MatrixXd>> wieght; 
-    std::vector<std::vector<float>> Error;
+    std::vector<float> Error;
+    std::vector<float> Iter;
     bool Regression;
     public: 
     Network(int nbInput,int nbHidden,int heightHidden,int nboutput,bool _regression):Regression(_regression){
         std::vector<float> e;
         std::vector<float> t;
-        t.push_back(0);
-        e.push_back(1);
-        Error.push_back(e);
-        Error.push_back(t);
+        Error.push_back(1.0f);
+        Iter.push_back(0.0f);
 
         std::srand(time(NULL)); // random seed
         Eigen::MatrixXd input(nbInput+1,1);
@@ -234,13 +233,20 @@ class Network{
             }
         }
 
-        Error[0].push_back(error/max_it);
-        float t = Error[1][Error[1].size()-1]+1;
-        Error[1].push_back(t);
-
+        Error.push_back(error/max_it);
+        float t = Iter[Iter.size()-1]+1;
+        Iter.push_back(t);
     }
 
-    std::vector<std::vector<float>> GetError(){
-        return this->Error;
+    float* GetError(){
+        return &this->Error[0];
+    }
+
+    float* GetItr(){
+        return &this->Iter[0];
+    }
+
+    int GetSizeError(){
+        return this->Error.size();
     }
 };
