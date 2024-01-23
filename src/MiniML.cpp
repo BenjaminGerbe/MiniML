@@ -1,49 +1,49 @@
 #define  MINIML_EXPORT __declspec(dllexport)
-#include "MiniML.hpp"
+#include "../include/MiniML.hpp"
 #include "Headers/Network.hpp"
 #include <iostream>
 
-MINIML_EXPORT void* SetUpNetwork(int nbInput,int nbHidden,int lengthLayer,int nbOutput,bool regression){
+void* MiniML::SetUpNetwork(int nbInput,int nbHidden,int lengthLayer,int nbOutput,bool regression){
     Network* net = new Network(nbInput,nbHidden,lengthLayer,nbOutput,regression);
     return net;
 }
 
-MINIML_EXPORT int GetNetworkSize(void* network){
+int MiniML::GetNetworkSize(void* network){
     Network* net = (Network*)(network);
     return  net->GetNetworkSize();
 }
 
-MINIML_EXPORT int GetLayerSize(void* network,int i){
+int MiniML::GetLayerSize(void* network,int i){
     Network* net = (Network*)(network);
     return  net->GetLayerSize(i);
 }
 
-MINIML_EXPORT int GetLayerRealSize(void* network,int i){
+int MiniML::GetLayerRealSize(void* network,int i){
     Network* net = (Network*)(network);
     return  net->GetLayerRealSize(i);
 }
 
-MINIML_EXPORT float GetWeight(void* network,int i,int k,int j){
+float MiniML::GetWeight(void* network,int i,int k,int j){
     Network* net = (Network*)(network);
     return net->GetWeight(i,k,j);
 }
 
-MINIML_EXPORT float* GetError(void* network){
+float* MiniML::GetError(void* network){
     Network* net = (Network*)network;
     return net->GetError();
 }
 
-MINIML_EXPORT float* GetIter(void* network){
+float* MiniML::GetIter(void* network){
     Network* net = (Network*)network;
     return net->GetItr();
 }
 
-MINIML_EXPORT int GetSizeError(void* network){
+int MiniML::GetSizeError(void* network){
     Network* net = (Network*)network;
     return net->GetSizeError();
 }
 
-MINIML_EXPORT float* SimulateNetwork(void* network,float* input,int n){
+float* MiniML::SimulateNetwork(void* network,float* input,int n){
     Network* net = (Network*)network;
     std::vector<float> value;
     for (int i = 0; i < n; i++)
@@ -53,7 +53,7 @@ MINIML_EXPORT float* SimulateNetwork(void* network,float* input,int n){
     return &net->simulate(value)[0];
 }
 
-MINIML_EXPORT void BackPropagation(void* network,float* input,int ninput,float* output,int noutput,float learningRate,float maxIteration){
+void MiniML::BackPropagation(void* network,float* input,int ninput,float* output,int noutput,float learningRate,float maxIteration){
     Network* net = (Network*)network;
     std::vector<std::vector<float>> inputVec;
     std::vector<std::vector<float>> outputVec;
