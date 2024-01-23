@@ -77,6 +77,8 @@ void MiniML::BackPropagation(void* network,float* input,int ninput,float* output
         }
         outputVec.push_back(ot);
     }
+
+    
     
     net->backPropagation(inputVec,outputVec,learningRate,maxIteration);
 }
