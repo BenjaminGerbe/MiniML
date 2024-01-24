@@ -50,7 +50,9 @@ float* MiniML::SimulateNetwork(void* network,float* input,int n){
     {
         value.push_back(input[i]);
     }
-    return &net->simulate(value)[0];
+    net->simulate(value);
+    float* rslt= &(net->outputVector[0]);
+    return rslt;
 }
 
 void MiniML::BackPropagation(void* network,float* input,int ninput,float* output,int noutput,float learningRate,float maxIteration){
@@ -61,9 +63,10 @@ void MiniML::BackPropagation(void* network,float* input,int ninput,float* output
     for (size_t i = 0; i < ninput; i++)
     {
         std::vector<float> in;
-        for (int j = 0; j < net->GetLayerSize(0); j++)
+        int size = net->GetLayerSize(0)-1;
+        for (int j = 0; j < size; j++)
         {
-            in.push_back(input[i+j]);
+            in.push_back(input[(i*size)+j]);
         }
         inputVec.push_back(in);
     }
@@ -71,14 +74,14 @@ void MiniML::BackPropagation(void* network,float* input,int ninput,float* output
     for (size_t i = 0; i < noutput; i++)
     {
         std::vector<float> ot;
-        for (int j = 0; j < net->GetLayerSize(net->GetNetworkSize()-1); j++)
+        int size = net->GetLayerSize(net->GetNetworkSize()-1);
+        for (int j = 0; j < size; j++)
         {
-            ot.push_back(output[i+j]);
+            ot.push_back(output[(i*size)+j]);
         }
         outputVec.push_back(ot);
     }
 
-    
     
     net->backPropagation(inputVec,outputVec,learningRate,maxIteration);
 }

@@ -13,7 +13,3 @@ include(CTest)
 enable_testing()
 add_library(MiniML SHARED ${Classes})
 target_compile_definitions(MiniML PRIVATE MINIML_API_EXPORTS)
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)

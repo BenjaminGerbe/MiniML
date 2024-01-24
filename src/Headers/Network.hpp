@@ -13,6 +13,7 @@ class Network{
     std::vector<float> Iter;
     bool Regression;
     public: 
+    std::vector<float> outputVector;
     Network(int nbInput,int nbHidden,int heightHidden,int nboutput,bool _regression):Regression(_regression){
         std::vector<float> e;
         std::vector<float> t;
@@ -144,7 +145,7 @@ class Network{
     
     std::vector<float> simulate(std::vector<float> input){
 
-        std::vector<float> v;
+        outputVector.clear();
         int l = GetNetworkSize();
         for (int i = 0; i < GetLayerRealSize(0); i++)
         {
@@ -160,10 +161,9 @@ class Network{
             else{
                 layer[l-1](i,0) = sigmoid((this->wieght[l-2][i]*layer[l-2])(0,0));
             }
-            v.push_back(layer[l-1](i,0));
+            outputVector.push_back(layer[l-1](i,0));
         }
-
-        return v;
+        return outputVector;
     }
 
     float sigmoid(float a){
