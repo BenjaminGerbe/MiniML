@@ -17,6 +17,6 @@ namespace MiniML{
         MINIML_API float* GetError(void* network);
         MINIML_API float* GetIter(void* network);
         MINIML_API int GetSizeError(void* network);
-        MINIML_API void BackPropagation(void* network,float* input,int ninput,float* output,int noutput,float learningRate,float maxIteration);
+        MINIML_API void BackPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration);
     } 
 }   

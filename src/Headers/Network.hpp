@@ -143,7 +143,7 @@ class Network{
         wieght[idx][i](0,j)= v;
     }
     
-    std::vector<float> simulate(std::vector<float> input){
+    float* simulate(float* input){
 
         outputVector.clear();
         int l = GetNetworkSize();
@@ -163,7 +163,7 @@ class Network{
             }
             outputVector.push_back(layer[l-1](i,0));
         }
-        return outputVector;
+        return &outputVector[0];
     }
 
     float sigmoid(float a){
@@ -182,13 +182,13 @@ class Network{
         return sigmoid((this->wieght[l-1][j]*layer[l-1])(0,0));
     }
 
-    void backPropagation(std::vector<std::vector<float>> input,std::vector<std::vector<float>> output,float a,int max_it){
+    void backPropagation(float** input,int sizeInput,float** output,float a,int max_it){
     
         float error = 0.0;
             
         for (int it = 0; it < max_it; it++)
         {
-            int idx = rand() % input.size();
+            int idx = rand() % sizeInput;
             simulate(input[idx]);
             float err=0.0f;
             int w  = GetLayerRealSize(GetNetworkSize()-1);
@@ -199,9 +199,9 @@ class Network{
                 if(!Regression){
                     b = (1-(value*value));
                 }
-                float d = b*(value - output[idx][i%output[idx].size()]);
+                float d = b*(value - output[idx][i]);
                 this->delta[GetNetworkSize()-1](i,0) = d;
-                err+=std::abs(value - output[idx][i%output[idx].size()]);
+                err+=std::abs(value - output[idx][i]);
             }
             error+= err/GetLayerRealSize(GetNetworkSize()-1);
             for (int i = GetNetworkSize()-2; i >= 0; i--)
