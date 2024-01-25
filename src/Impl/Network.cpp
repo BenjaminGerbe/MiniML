@@ -15,7 +15,7 @@ int Network::GetLayerSize(int l){
 
 int Network::GetLayerRealSize(int l){
     if( l < 0 || l >= layer.size()) return 0;
-    return l==0 || l == GetNetworkSize()-2 ? layer[l].rows() -1 : layer[l].rows(); 
+    return l < GetNetworkSize()-1 ? layer[l].rows() -1 : layer[l].rows(); 
 }
 
 void Network::SetWeight(int l,int i,int j,float v){

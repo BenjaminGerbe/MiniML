@@ -15,7 +15,7 @@ class Network{
     bool Regression;
     public: 
     std::vector<float> outputVector;
-    
+
     Network(int nbInput,int nbHidden,int heightHidden,int nboutput,bool _regression):Regression(_regression){
         std::vector<float> e;
         std::vector<float> t;
@@ -42,7 +42,7 @@ class Network{
                 n = heightHidden;
             }
 
-            Eigen::MatrixXd hidden(n+ (i== nbCouche-1 ? 1 : 0),1);//add one if he need bias
+            Eigen::MatrixXd hidden(n+ (i <= nbCouche-1 ? 1 : 0),1);//add one if he need bias
             std::vector<Eigen::MatrixXd> layerweight;
             for (int j = 0; j < n; j++)
             {
@@ -58,7 +58,7 @@ class Network{
                 layerweight.push_back(thisLayer);
             }
             p -= n;
-            if(i == nbCouche -1){
+            if(i <= nbCouche -1){
                 hidden(n,0) = 1;
             }
             wieght.push_back(layerweight);
