@@ -17,20 +17,23 @@ class Network{
     std::vector<float> outputVector;
 
     Network(int nbInput,int nbHidden,int heightHidden,int nboutput,bool _regression):Regression(_regression){
-        std::vector<float> e;
-        std::vector<float> t;
+        // set the first error to 1 at the first iteration
         Error.push_back(1.0f);
         Iter.push_back(0.0f);
 
         std::srand(time(NULL)); // random seed
+        
+        //create the first layer
         Eigen::MatrixXd input(nbInput+1,1);
         for (int i = 0; i < nbInput; i++){
             input(i,0) = (0);
         }
 
-        input(nbInput,0) = 1; // biais
+        // the bias of the input
+        input(nbInput,0) = 1;
         layer.push_back(input);
 
+        // to create the hiddens layers
         float vs =((float)nbHidden)/(float)heightHidden;
         int nbCouche = std::ceil(vs);
         int p = nbHidden;
@@ -42,7 +45,7 @@ class Network{
                 n = heightHidden;
             }
 
-            Eigen::MatrixXd hidden(n+ (i <= nbCouche-1 ? 1 : 0),1);//add one if he need bias
+            Eigen::MatrixXd hidden(n+1,1);//add one if he need bias
             std::vector<Eigen::MatrixXd> layerweight;
             for (int j = 0; j < n; j++)
             {
@@ -58,14 +61,12 @@ class Network{
                 layerweight.push_back(thisLayer);
             }
             p -= n;
-            if(i <= nbCouche -1){
-                hidden(n,0) = 1;
-            }
+            hidden(n,0) = 1;
             wieght.push_back(layerweight);
             layer.push_back(hidden);
         }
         
-
+        // and the final layer the output
         Eigen::MatrixXd thisLayer(nboutput,GetLayerSize(layer.size()-1));
         std::vector<Eigen::MatrixXd> ouputVec;
         Eigen::MatrixXd output(nboutput,1);
