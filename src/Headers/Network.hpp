@@ -67,7 +67,7 @@ class Network{
         }
         
         // and the final layer the output
-        Eigen::MatrixXd thisLayer(nboutput,GetLayerSize(layer.size()-1));
+        Eigen::MatrixXd thisLayer(1,GetLayerSize(layer.size()-1));
         std::vector<Eigen::MatrixXd> ouputVec;
         Eigen::MatrixXd output(nboutput,1);
         for (int i = 0; i < nboutput; i++)
@@ -76,7 +76,7 @@ class Network{
             for (int j = 0; j < GetLayerSize(layer.size()-1); j++)
             {
                 float r = (((double) rand() / (RAND_MAX))*2.0f)-1.0f;
-                thisLayer(i,j) = r;
+                thisLayer(0,j) = r;
             }
             ouputVec.push_back(thisLayer);
         }
@@ -107,6 +107,7 @@ class Network{
     float* simulate(float* input);
     float NetWorkProcess(int l,int j);
     void backPropagation(float** input,int sizeInput,float** output,float a,int max_it);
+    void linearPropagation(float** input,int sizeInput,float** output,float a,float max_it);
 
     float sigmoid(float a){ return std::tanh(a);}
     float* GetError(){return &this->Error[0];}

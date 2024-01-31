@@ -117,3 +117,28 @@ void Network::backPropagation(float** input,int sizeInput,float** output,float a
     Iter.push_back(t);
 }
 
+void Network::linearPropagation(float** input,int sizeInput,float** output,float a,float max_it){
+    if(this->GetNetworkSize() > 2) return;
+
+    if(!this->Regression){
+        for (int i = 0; i < max_it; i++)
+        {
+            int idx = rand() % sizeInput;
+            simulate(input[idx]);
+            int nbInput = this->GetLayerSize(0);
+            Eigen::MatrixXd X(1,nbInput);
+            for (int j = 0; j < nbInput; j++)
+            {
+                X(0,j) = input[idx][j];
+            }
+            int w  = GetLayerRealSize(GetNetworkSize()-1);       
+            for (int k = 0; k < w; k++)
+            {
+                float value = layer[GetNetworkSize()-1](k,0);
+                wieght[0][k] = wieght[0][k]+(a*(output[idx][k]-value)*X); 
+            }
+            
+        }
+    }
+
+}

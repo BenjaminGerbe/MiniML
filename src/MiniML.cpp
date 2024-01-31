@@ -54,3 +54,8 @@ void MiniML::BackPropagation(void* network,float** input,int ninput,float** outp
     Network* net = (Network*)network;
     net->backPropagation(input,ninput,output,learningRate,maxIteration);
 }
+
+void MiniML::LinearPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration){
+    Network* net = (Network*)network;
+    net->linearPropagation(input,ninput,output,learningRate,maxIteration);
+}
