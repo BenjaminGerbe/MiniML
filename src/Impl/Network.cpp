@@ -82,7 +82,7 @@ void Network::backPropagation(float** input,int sizeInput,float** output,float a
             this->delta[GetNetworkSize()-1](i,0) = d;
             err+=std::abs(value - output[idx][i]);
         }
-        error+= err/GetLayerRealSize(GetNetworkSize()-1);
+        error+= err/(float)w;
         for (int i = GetNetworkSize()-2; i >= 0; i--)
         {
             for (int j = 0; j < GetLayerRealSize(i); j++)
@@ -120,6 +120,7 @@ void Network::backPropagation(float** input,int sizeInput,float** output,float a
 void Network::linearPropagation(float** input,int sizeInput,float** output,float a,float max_it){
     if(this->GetNetworkSize() > 2) return;
 
+    float error = 0.0f;
     if(!this->Regression){
         for (int i = 0; i < max_it; i++)
         {
@@ -127,18 +128,60 @@ void Network::linearPropagation(float** input,int sizeInput,float** output,float
             simulate(input[idx]);
             int nbInput = this->GetLayerSize(0);
             Eigen::MatrixXd X(1,nbInput);
-            for (int j = 0; j < nbInput; j++)
+            for (int j = 0; j < nbInput-1; j++)
             {
                 X(0,j) = input[idx][j];
             }
-            int w  = GetLayerRealSize(GetNetworkSize()-1);       
+            X(0,nbInput-1) = 1;
+            int w  = GetLayerRealSize(GetNetworkSize()-1);  
+            float err;
             for (int k = 0; k < w; k++)
             {
                 float value = layer[GetNetworkSize()-1](k,0);
+                err= output[idx][k]-value;
                 wieght[0][k] = wieght[0][k]+(a*(output[idx][k]-value)*X); 
             }
+
+            error += err/(float)w;
             
         }
+    }
+    else{
+
+        int nbInput = this->GetLayerSize(0);
+        int w  = GetLayerRealSize(GetNetworkSize()-1);       
+        Eigen::MatrixXd X(sizeInput,nbInput);
+        Eigen::MatrixXd Y(sizeInput,nbInput);
+        for (int i = 0; i < sizeInput; i++)
+        {
+            X(i,0) = 1;
+            for (int j = 1; j < nbInput; j++)
+            {
+                X(i,j) = input[i][j-1];
+            }
+            
+            for (int j = 0; j < w; j++)
+            {
+                Y(i,j) = output[i][j];
+            }
+
+        }
+
+        int idx = rand() % sizeInput;
+        Eigen::MatrixXd tX = X.transpose();
+        Eigen::MatrixXd tX_X = tX * X;
+        if(!tX_X.completeOrthogonalDecomposition().isInvertible()){
+            std::cout << "the matrix tX is not invertible" << std::endl;
+            return;
+        }
+        Eigen::MatrixXd W = ((tX * X).inverse() * tX) * Y;
+        for (int i = 0; i < nbInput; i++)
+        {
+            wieght[0][0](0,i) = W((nbInput-1)-i,0);
+        }
+
+        simulate(input[idx]);
+        
     }
 
 }
