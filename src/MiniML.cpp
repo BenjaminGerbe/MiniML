@@ -59,3 +59,8 @@ void MiniML::LinearPropagation(void* network,float** input,int ninput,float** ou
     Network* net = (Network*)network;
     net->linearPropagation(input,ninput,output,learningRate,maxIteration);
 }
+
+void MiniML::RFBPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration){
+    Network* net = (Network*)network;
+    net->RFBPropagation(input,ninput,output,learningRate,maxIteration);
+}

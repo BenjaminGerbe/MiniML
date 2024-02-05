@@ -108,7 +108,7 @@ class Network{
     float NetWorkProcess(int l,int j);
     void backPropagation(float** input,int sizeInput,float** output,float a,int max_it);
     void linearPropagation(float** input,int sizeInput,float** output,float a,float max_it);
-
+    void RFBPropagation(float** input,int sizeInput,float** output,float a,float max_it);
     float sigmoid(float a){ return std::tanh(a);}
     float* GetError(){return &this->Error[0];}
     float* GetItr(){return &this->Iter[0];}
