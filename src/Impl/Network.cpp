@@ -1,5 +1,5 @@
 #include "../Headers/Network.hpp"
-
+#include <algorithm>
 float Network::GetWeight(int l,int i,int j){
     int idx = l-1; // beceause the layer of the input is not added
     if(idx < 0 || idx >= GetNetworkSize()){
@@ -39,7 +39,11 @@ float* Network::simulate(float* input){
     for (int i = 0; i < GetLayerSize(l-1); i++)
     {
         if(Regression){
-            layer[l-1](i,0) =(this->wieght[l-2][i]*layer[l-2])(0,0);
+                
+            float min = std::numeric_limits<float>::min();
+            float max = std::numeric_limits<float>::max();
+            float v = (this->wieght[l-2][i]*layer[l-2])(0,0);
+            layer[l-1](i,0) = std::clamp(v,min,max);
         }
         else{
             layer[l-1](i,0) = sigmoid((this->wieght[l-2][i]*layer[l-2])(0,0));
@@ -186,38 +190,59 @@ void Network::linearPropagation(float** input,int sizeInput,float** output,float
 
 }
 
-void Network::RFBPropagation(float** input,int sizeInput,float** output,float a,float max_it){
+void Network::SimulateRBF(float* input,int size,float a){
+    int nbInput = size;
+    Eigen::MatrixXd X(size,1);
+    for (int i = 0; i < size; i++)
+    {
+        X(i,0) = input[i];
+    }
+
+    outputVector.clear();
+    for (int i = 0; i < exempleParameter.size(); i++)
+    {
+        float v = std::exp(-a*(std::pow((X-exempleParameter[i]).norm(),2)));
+        outputVector.push_back(v);
+    }
+    
+    simulate(&outputVector[0]);
+}
+
+void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float** output,float a,float max_it){
     if(this->GetNetworkSize() > 2) return;
 
     float error = 0.0f;
     if(!this->Regression){
-        for (int i = 0; i < max_it; i++)
-        {
-            int idx = rand() % sizeInput;
-            simulate(input[idx]);
-            int nbInput = this->GetLayerSize(0);
-            Eigen::MatrixXd X(1,nbInput);
-            for (int j = 0; j < nbInput-1; j++)
-            {
-                X(0,j) = input[idx][j];
-            }
-            X(0,nbInput-1) = 1;
-            int w  = GetLayerRealSize(GetNetworkSize()-1);  
-            float err;
-            for (int k = 0; k < w; k++)
-            {
-                float value = sigmoid( layer[GetNetworkSize()-1](k,0));
-                err= output[idx][k]-value;
-                wieght[0][k] = wieght[0][k]+(a*(output[idx][k]-value)*X); 
-            }
 
-            error += err/(float)w;
-            
-        }
+        // int nbInput = this->GetLayerSize(0);
+        // int w  = GetLayerRealSize(GetNetworkSize()-1);       
+        // std::vector<Eigen::MatrixXd> X;
+        // Eigen::MatrixXd Y(sizeInput,w);
+        // for (int i = 0; i < sizeInput; i++)
+        // {
+        //     Eigen::MatrixXd Xtmp(sizeInput,nbInput);
+        //     Xtmp(0,0) = 1;
+        //     for (int j = 1; j < nbInput; j++)
+        //     {
+        //         Xtmp(0,j) = input[i][j-1];
+        //     }
+        //     X.push_back(Xtmp);
+
+        //     for (int j = 0; j < w; j++)
+        //     {
+        //         Y(i,j) = output[i][j];
+        //     }
+
+        // }
+        
+
+//        float output;
+
+
     }
     else{
 
-        int nbInput = this->GetLayerSize(0);
+        int nbInput = fLayerLength;
         int w  = GetLayerRealSize(GetNetworkSize()-1);       
         std::vector<Eigen::MatrixXd> X;
         Eigen::MatrixXd Y(sizeInput,w);
@@ -256,8 +281,7 @@ void Network::RFBPropagation(float** input,int sizeInput,float** output,float a,
             wieght[0][0](0,i) = W(i,0);
         }
 
-        simulate(input[idx]);
-        
+        SimulateRBF(input[idx],sizeInput,a);
     }
 
 }
