@@ -2,10 +2,10 @@ import chess
 import chess.pgn
 import json
 
-max_games = 20
+max_games = 5000
 incr = 0
 
-pgn_path = "../test_files/test_evals_500.pgn"
+pgn_path = "../test_files/10k_analysed_games.pgn"
 pgn_file = open(pgn_path)
 
 games = []
@@ -16,6 +16,7 @@ for game in iter(lambda: chess.pgn.read_game(pgn_file), None):
     board = game.board()
     root = game.root()
     turns = []
+    print("Site:", game.headers["Site"])
 
     for move in game.mainline_moves():
         if board.is_game_over():
@@ -57,9 +58,6 @@ for game in iter(lambda: chess.pgn.read_game(pgn_file), None):
         
         turn_info["board_state"] = board_state
         turns.append(turn_info)
-        
-        if incr == max_games:
-            break
 
     game_info["turns"] = turns
     games.append(game_info)
@@ -68,4 +66,7 @@ for game in iter(lambda: chess.pgn.read_game(pgn_file), None):
         break
 
 with open("../output_files/games.json", "w") as f:
-    json.dump(games, f, indent=None)
+    json_string = json.dumps(games, indent=None)
+    json_string = json_string.replace("turns", "\nturns")
+    f.write(json_string)
+

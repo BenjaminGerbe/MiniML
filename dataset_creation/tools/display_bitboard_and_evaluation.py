@@ -56,9 +56,6 @@ for game in iter(lambda: chess.pgn.read_game(pgn_file), None):
         print("\n")
         print("-" * 80)
         print("\n")
-        
-        if incr == max_games:
-            break
 
     if incr == max_games:
         break
