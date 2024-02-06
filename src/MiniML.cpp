@@ -50,6 +50,13 @@ float* MiniML::SimulateNetwork(void* network,float* input,int n){
     return rslt;
 }
 
+float* MiniML::RBFSimulate(void* network,float* input,int n,float a){
+    Network* net = (Network*)network;
+    net->SimulateRBF(input,n,a);
+    float* rslt= &(net->outputVector[0]);
+    return rslt;
+}
+
 void MiniML::BackPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration){
     Network* net = (Network*)network;
     net->backPropagation(input,ninput,output,learningRate,maxIteration);
@@ -60,7 +67,7 @@ void MiniML::LinearPropagation(void* network,float** input,int ninput,float** ou
     net->linearPropagation(input,ninput,output,learningRate,maxIteration);
 }
 
-void MiniML::RFBPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration){
+void MiniML::RBFPropagation(void* network,float** input,int ninput,int sizeInput,float** output,int noutput,float learningRate,float maxIteration){
     Network* net = (Network*)network;
-    net->RFBPropagation(input,ninput,output,learningRate,maxIteration);
+    net->RBFPropagation(input,ninput,sizeInput,output,learningRate,maxIteration);
 }
