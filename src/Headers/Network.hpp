@@ -11,6 +11,8 @@ class Network{
     std::vector<Eigen::MatrixXd> delta; 
     std::vector<std::vector<Eigen::MatrixXd>> wieght; 
     std::vector<Eigen::MatrixXd> exempleParameter;
+    std::vector<Eigen::MatrixXd> barycenter;
+    std::vector<Eigen::MatrixXd> output;
     std::vector<float> Error;
     std::vector<float> Iter;
     bool Regression;
@@ -115,4 +117,5 @@ class Network{
     float* GetItr(){return &this->Iter[0];}
     int GetSizeError(){return this->Error.size();}
     void SimulateRBF(float* input,int size,float a);
+    void LLoyd(int size,int ksize);
 };

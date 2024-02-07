@@ -53,6 +53,7 @@ float* MiniML::SimulateNetwork(void* network,float* input,int n){
 float* MiniML::RBFSimulate(void* network,float* input,int n,float a){
     Network* net = (Network*)network;
     net->SimulateRBF(input,n,a);
+    if(net->outputVector.size() == 0 ) net->outputVector.push_back(0);
     float* rslt= &(net->outputVector[0]);
     return rslt;
 }
