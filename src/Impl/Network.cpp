@@ -1,5 +1,5 @@
 #include "../Headers/Network.hpp"
-
+#include <algorithm>
 float Network::GetWeight(int l,int i,int j){
     int idx = l-1; // beceause the layer of the input is not added
     if(idx < 0 || idx >= GetNetworkSize()){
@@ -39,7 +39,11 @@ float* Network::simulate(float* input){
     for (int i = 0; i < GetLayerSize(l-1); i++)
     {
         if(Regression){
-            layer[l-1](i,0) =(this->wieght[l-2][i]*layer[l-2])(0,0);
+                
+            float min = std::numeric_limits<float>::min();
+            float max = std::numeric_limits<float>::max();
+            float v = (this->wieght[l-2][i]*layer[l-2])(0,0);
+            layer[l-1](i,0) = std::clamp(v,min,max);
         }
         else{
             layer[l-1](i,0) = sigmoid((this->wieght[l-2][i]*layer[l-2])(0,0));
@@ -186,78 +190,230 @@ void Network::linearPropagation(float** input,int sizeInput,float** output,float
 
 }
 
-void Network::RFBPropagation(float** input,int sizeInput,float** output,float a,float max_it){
-    if(this->GetNetworkSize() > 2) return;
-
-    float error = 0.0f;
-    if(!this->Regression){
-        for (int i = 0; i < max_it; i++)
-        {
-            int idx = rand() % sizeInput;
-            simulate(input[idx]);
-            int nbInput = this->GetLayerSize(0);
-            Eigen::MatrixXd X(1,nbInput);
-            for (int j = 0; j < nbInput-1; j++)
-            {
-                X(0,j) = input[idx][j];
-            }
-            X(0,nbInput-1) = 1;
-            int w  = GetLayerRealSize(GetNetworkSize()-1);  
-            float err;
-            for (int k = 0; k < w; k++)
-            {
-                float value = sigmoid( layer[GetNetworkSize()-1](k,0));
-                err= output[idx][k]-value;
-                wieght[0][k] = wieght[0][k]+(a*(output[idx][k]-value)*X); 
-            }
-
-            error += err/(float)w;
-            
-        }
+void Network::SimulateRBF(float* input,int size,float a){
+    if(exempleParameter.size() == 0) return;
+    int nbInput = size;
+    Eigen::MatrixXd X(1,size);
+    for (int i = 0; i < size; i++)
+    {
+        X(0,i) = input[i];
     }
-    else{
 
-        int nbInput = this->GetLayerSize(0);
-        int w  = GetLayerRealSize(GetNetworkSize()-1);       
-        std::vector<Eigen::MatrixXd> X;
-        Eigen::MatrixXd Y(sizeInput,w);
-        for (int i = 0; i < sizeInput; i++)
+    outputVector.clear();
+    for (int i = 0; i < exempleParameter.size(); i++)
+    {
+        float v = std::exp(-a*(std::pow((X-exempleParameter[i]).norm(),2)));
+        outputVector.push_back(v);
+    }
+    
+    if(input[0] == 0.5f && input[1] == 0.5f){
+        std::cout << outputVector[0];
+    }
+    float v = simulate(&outputVector[0])[0];
+
+    if(input[0] == 0.5f && input[1] == 0.5f){
+        std::cout <<" == " << v << std::endl;
+    }
+}
+
+struct LLoydStructure{
+    int idx;
+    int value;
+    Eigen::MatrixXd matrix;
+    LLoydStructure(int idx,int v){
+        this->idx = idx;
+        this->value = v;
+    }
+};
+
+void Network::LLoyd(int size,int ksize){
+    barycenter.clear();
+    std::vector<Eigen::MatrixXd> barycenterValue;        
+    std::vector<double> number;        
+    std::vector<LLoydStructure> cluster;
+
+     
+    for (int i = 0; i < exempleParameter.size(); i++)
+    {
+        LLoydStructure c(i,0);
+        Eigen::MatrixXd b(1,size);
+        for (int j = 0; j < exempleParameter[i].cols(); j++)
         {
-            Eigen::MatrixXd Xtmp(sizeInput,nbInput);
-            Xtmp(0,0) = 1;
-            for (int j = 1; j < nbInput; j++)
-            {
-                Xtmp(0,j) = input[i][j-1];
-            }
-            X.push_back(Xtmp);
-
-            for (int j = 0; j < w; j++)
-            {
-                Y(i,j) = output[i][j];
-            }
-
+            b(0,j) = exempleParameter[i](0,j);
         }
-
-        Eigen::MatrixXd phi(X.size(),X.size());
-        for (int i = 0; i < X.size(); i++)
+        for (int j = 0; j < output[i].cols(); j++)
         {
-            for (int j = 0; j < X.size(); j++)
-            {
-                double delta = std::powl((X[i] - X[j]).norm(),2);
-                phi(i,j) = std::exp(-a*delta);
-            }   
+            b(0,exempleParameter[i].cols()+j) = output[i](0,j);
         }
+        c.matrix = b;
+        cluster.push_back(c);
+    }
 
-        int idx = rand() % sizeInput;
-
-        Eigen::MatrixXd W = phi.inverse()*Y;
-        for (int i = 0; i < nbInput; i++)
-        {
-            wieght[0][0](0,i) = W(i,0);
-        }
-
-        simulate(input[idx]);
+    for (int i = 0; i < ksize; i++)
+    {
         
+        int idx = 0;
+        bool find = false;
+        do
+        {
+            idx = rand() % exempleParameter.size();
+            find = false;
+            int k =0;
+            while(!find && k < barycenter.size() ){
+                if(barycenter[k] == cluster[idx].matrix){
+                    find = true;
+                    break;
+                }
+                else{
+                    k++;
+                }
+            }
+        } while (find);
+        
+        barycenter.push_back(cluster[idx].matrix);
+        number.push_back(0);
+        Eigen::MatrixXd mat(1,size);
+        for (int k = 0; k < size; k++)
+        {
+            mat(0,k) = 0;
+        }
+        
+        barycenterValue.push_back(mat);
+
+        cluster[idx].value = i;
+    }
+    
+    int GF = 0;
+    while(true && GF < 1000){
+        std::cout << " ============ "<<std::endl;
+        for (int i = 0; i < cluster.size(); i++)
+        {
+            Eigen::MatrixXd point = cluster[i].matrix;
+            float minimalDistance = std::numeric_limits<float>::max();
+            float value;
+            for (int j = 0; j < barycenter.size(); j++)
+            {
+                Eigen::MatrixXd vec = ( barycenter[j]-point);
+                if( vec.norm() <= minimalDistance){
+                    minimalDistance = (barycenter[j]-point).norm();
+                    if(cluster[i].matrix == barycenter[j]){
+                        std::cout << i<< " == " << minimalDistance << std::endl;
+                    }
+                    value = j;
+                }
+            }
+            cluster[i].value = value;
+        }
+        for (int i = 0; i < cluster.size(); i++)
+        {
+                barycenterValue[cluster[i].value]+=cluster[i].matrix;
+                number[cluster[i].value]++;
+        }
+        
+        float epsilon = std::numeric_limits<float>::epsilon();
+        bool b = true;
+        for (int i = barycenter.size()-1; i >=0 ; i--)
+        {
+            if(number[i] == 0){
+                barycenter.erase(barycenter.begin()+i);
+                number.erase(number.begin()+i);
+                continue;
+            }
+            barycenterValue[i]/= number[i];
+            number[i] = 0;
+            if( (barycenterValue[i] - barycenter[i]).norm() > epsilon){
+                b = false;
+                barycenter[i] = barycenterValue[i];
+                for (int k = 0; k < size; k++)
+                {
+                    barycenterValue[i](0,k) = 0;
+                }
+            }
+        }
+    
+        if(b){
+            break;
+        }
+        GF++;
     }
 
 }
+
+void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float** output,float a,int k,float max_it){
+    if(this->GetNetworkSize() > 2) return;
+
+    float error = 0.0f;
+    int nbInput = fLayerLength;
+    int w  = GetLayerRealSize(GetNetworkSize()-1);       
+
+    exempleParameter.clear();
+    Eigen::MatrixXd Y(sizeInput,w);
+    for (int i = 0; i < sizeInput; i++)
+    {
+        Eigen::MatrixXd Xtmp(1,nbInput);
+        for (int j = 0; j < nbInput; j++)
+        {
+            Xtmp(0,j) = input[i][j];
+            
+        }
+        exempleParameter.push_back(Xtmp);
+
+        Eigen::MatrixXd mat(1,w);
+        for (int j = 0; j < w; j++)
+        {
+            Y(i,j) = output[i][j];
+            mat(0,j) = output[i][j];             
+        }
+        this->output.push_back(mat);
+
+    }
+
+    this->LLoyd(nbInput+w,k);
+
+    Eigen::MatrixXd phi(exempleParameter.size(),barycenter.size());
+    for (int i = 0; i < exempleParameter.size(); i++)
+    {
+        for (int j = 0; j < barycenter.size(); j++)
+        {
+            Eigen::MatrixXd map(1,barycenter[j].cols()-w);
+            for (int k = 0; k < map.cols(); k++)
+            {
+                map(0,k) = barycenter[j](0,k);
+            }
+            
+            double delta = std::powl((exempleParameter[i] - map).norm(),2);
+            phi(i,j) = std::exp(-a*delta);
+        }   
+    }
+
+    exempleParameter.clear();
+    for (int j = 0; j < barycenter.size(); j++)
+    {
+        Eigen::MatrixXd map(1,barycenter[j].cols()-w);
+        for (int k = 0; k < map.cols(); k++)
+        {
+            map(0,k) = barycenter[j](0,k);
+        }
+
+        exempleParameter.push_back(map);
+    }
+
+    Eigen::MatrixXd tPhi = phi.transpose();
+    Eigen::MatrixXd W = ((tPhi * phi));
+
+    W = W.inverse();
+    W = (W*tPhi)*Y;
+    nbInput = W.rows()+1;
+    wieght[0][0] = Eigen::MatrixXd(1,nbInput);
+    layer[0] = Eigen::MatrixXd(nbInput,1);
+
+    for (int i = 0; i < W.rows(); i++)
+    {
+        wieght[0][0](0,i) = W(i,0);
+        layer[0](i,0) = 0;
+    }
+    layer[0](nbInput-1,0) = 1;
+    wieght[0][0](0, nbInput-1) = 0;
+}
+
+ 
