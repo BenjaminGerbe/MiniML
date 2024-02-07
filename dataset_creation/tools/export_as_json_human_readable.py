@@ -56,9 +56,6 @@ for game in iter(lambda: chess.pgn.read_game(pgn_file), None):
         
         turn_info["board_state"] = board_state
         turns.append(turn_info)
-        
-        if incr == max_games:
-            break
 
     game_info["turns"] = turns
     games.append(game_info)
