@@ -229,7 +229,7 @@ struct LLoydStructure{
 void Network::LLoyd(int size,int ksize){
     barycenter.clear();
     std::vector<Eigen::MatrixXd> barycenterValue;        
-    std::vector<int> number;        
+    std::vector<double> number;        
     std::vector<LLoydStructure> cluster;
 
      
@@ -252,7 +252,24 @@ void Network::LLoyd(int size,int ksize){
     for (int i = 0; i < ksize; i++)
     {
         
-        int idx = rand() % exempleParameter.size();
+        int idx = 0;
+        bool find = false;
+        do
+        {
+            idx = rand() % exempleParameter.size();
+            find = false;
+            int k =0;
+            while(!find && k < barycenter.size() ){
+                if(barycenter[k] == cluster[idx].matrix){
+                    find = true;
+                    break;
+                }
+                else{
+                    k++;
+                }
+            }
+        } while (find);
+        
         barycenter.push_back(cluster[idx].matrix);
         number.push_back(0);
         Eigen::MatrixXd mat(1,size);
@@ -265,8 +282,11 @@ void Network::LLoyd(int size,int ksize){
 
         cluster[idx].value = i;
     }
+    
 
-    while(true){
+    int GF = 0;
+    while(true && GF < 1000){
+        std::cout << " ============ "<<std::endl;
         for (int i = 0; i < cluster.size(); i++)
         {
             Eigen::MatrixXd point = cluster[i].matrix;
@@ -274,25 +294,30 @@ void Network::LLoyd(int size,int ksize){
             float value;
             for (int j = 0; j < barycenter.size(); j++)
             {
-                if(( barycenter[j]-point).norm() <= minimalDistance){
+                Eigen::MatrixXd vec = ( barycenter[j]-point);
+                if( vec.norm() <= minimalDistance){
                     minimalDistance = (barycenter[j]-point).norm();
+                    if(cluster[i].matrix == barycenter[j]){
+                        std::cout << i<< " == " << minimalDistance << std::endl;
+                    }
                     value = j;
                 }
             }
             cluster[i].value = value;
-            cluster[i].matrix = point;
         }
-        bool b = true;
-        float epsilon = std::numeric_limits<float>::epsilon();
         for (int i = 0; i < cluster.size(); i++)
         {
                 barycenterValue[cluster[i].value]+=cluster[i].matrix;
                 number[cluster[i].value]++;
         }
         
-        for (int i = 0; i < barycenter.size(); i++)
+        float epsilon = std::numeric_limits<float>::epsilon();
+        bool b = true;
+        for (int i = barycenter.size()-1; i >=0 ; i--)
         {
             if(number[i] == 0){
+                barycenter.erase(barycenter.begin()+i);
+                number.erase(number.begin()+i);
                 continue;
             }
             barycenterValue[i]/= number[i];
@@ -310,6 +335,7 @@ void Network::LLoyd(int size,int ksize){
         if(b){
             break;
         }
+        GF++;
     }
 
 }
@@ -343,10 +369,10 @@ void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float*
 
     }
 
-    //this->LLoyd(nbInput+w,std::max((int)exempleParameter.size()/10,1));
-    this->LLoyd(nbInput+w,1);
+    this->LLoyd(nbInput+w,std::max((int)exempleParameter.size()/10,1));
+    //this->LLoyd(nbInput+w,6);
 
-    Eigen::MatrixXd phi(exempleParameter.size(),exempleParameter.size());
+    Eigen::MatrixXd phi(exempleParameter.size(),barycenter.size());
     for (int i = 0; i < exempleParameter.size(); i++)
     {
         for (int j = 0; j < barycenter.size(); j++)
@@ -362,12 +388,35 @@ void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float*
         }   
     }
 
-    Eigen::MatrixXd W =( phi.transpose()*phi).inverse()*phi.transpose()*Y;
+    exempleParameter.clear();
+    for (int j = 0; j < barycenter.size(); j++)
+    {
+        Eigen::MatrixXd map(1,barycenter[j].cols()-w);
+        for (int k = 0; k < map.cols(); k++)
+        {
+            map(0,k) = barycenter[j](0,k);
+        }
+
+        exempleParameter.push_back(map);
+    }
+
+    Eigen::MatrixXd tPhi = phi.transpose();
+    Eigen::MatrixXd W = ((tPhi * phi));
+
+    W = W.inverse();
+    W = (W*tPhi)*Y;
+    nbInput = W.rows()+1;
+    wieght[0][0] = Eigen::MatrixXd(1,nbInput);
+    layer[0] = Eigen::MatrixXd(nbInput,1);
+
+
     for (int i = 0; i < W.rows(); i++)
     {
         wieght[0][0](0,i) = W(i,0);
+        layer[0](i,0) = 0;
     }
-    wieght[0][0](0, W.rows()) = 0;
+    layer[0](nbInput-1,0) = 1;
+    wieght[0][0](0, nbInput-1) = 0;
 
 }
 
