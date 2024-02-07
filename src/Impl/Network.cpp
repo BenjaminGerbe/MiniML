@@ -283,7 +283,6 @@ void Network::LLoyd(int size,int ksize){
         cluster[idx].value = i;
     }
     
-
     int GF = 0;
     while(true && GF < 1000){
         std::cout << " ============ "<<std::endl;
@@ -340,7 +339,7 @@ void Network::LLoyd(int size,int ksize){
 
 }
 
-void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float** output,float a,float max_it){
+void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float** output,float a,int k,float max_it){
     if(this->GetNetworkSize() > 2) return;
 
     float error = 0.0f;
@@ -369,8 +368,7 @@ void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float*
 
     }
 
-    this->LLoyd(nbInput+w,std::max((int)exempleParameter.size()/10,1));
-    //this->LLoyd(nbInput+w,6);
+    this->LLoyd(nbInput+w,k);
 
     Eigen::MatrixXd phi(exempleParameter.size(),barycenter.size());
     for (int i = 0; i < exempleParameter.size(); i++)
@@ -409,7 +407,6 @@ void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float*
     wieght[0][0] = Eigen::MatrixXd(1,nbInput);
     layer[0] = Eigen::MatrixXd(nbInput,1);
 
-
     for (int i = 0; i < W.rows(); i++)
     {
         wieght[0][0](0,i) = W(i,0);
@@ -417,7 +414,6 @@ void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float*
     }
     layer[0](nbInput-1,0) = 1;
     wieght[0][0](0, nbInput-1) = 0;
-
 }
 
  

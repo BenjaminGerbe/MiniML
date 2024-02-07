@@ -14,7 +14,7 @@ namespace MiniML{
         MINIML_API int GetSizeError(void* network);
         MINIML_API void BackPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration);
         MINIML_API void LinearPropagation(void* network,float** input,int ninput,float** output,int noutput,float learningRate,float maxIteration);
-        MINIML_API void RBFPropagation(void* network,float** input,int ninput,int sizeInput,float** output,int noutput,float learningRate,float maxIteration);
+        MINIML_API void RBFPropagation(void* network,float** input,int ninput,int sizeInput,float** output,int noutput,float learningRate,int k,float maxIteration);
         MINIML_API void* SetUpNetwork(int i,int y,int h,int z,bool b);
         MINIML_API float GetWeight(void* network,int i,int k,int j);
         MINIML_API float* SimulateNetwork(void* network,float* input,int n);
