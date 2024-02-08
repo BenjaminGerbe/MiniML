@@ -1,11 +1,43 @@
 #include "../Headers/Network.hpp"
 #include <algorithm>
+#include <fstream>
+
 float Network::GetWeight(int l,int i,int j){
     int idx = l-1; // beceause the layer of the input is not added
     if(idx < 0 || idx >= GetNetworkSize()){
         return 0.0f;
     }
     return wieght[idx][i](0,j);
+}
+
+void Network::save_weight(const std::string& filename) {
+    std::ofstream out(filename, std::ios::binary);
+    for (int i = 0; i < wieght.size(); i++) {
+        for (int j = 0; j < wieght[i].size(); j++) {
+            int rows = wieght[i][j].rows();
+            int cols = wieght[i][j].cols();
+            out.write(reinterpret_cast<char*> (&rows), sizeof(int));
+            out.write(reinterpret_cast<char*> (&cols), sizeof(int));
+            out.write(reinterpret_cast<char*> (wieght[i][j].data()), rows * cols * sizeof(double));
+        }
+    }
+    out.close();
+}
+
+void Network::load_weight(const std::string& filename) {
+    std::ifstream in(filename, std::ios::binary);
+    for (int i = 0; i < wieght.size(); i++) {
+        for (int j = 0; j < wieght[i].size(); j++) {
+            int rows, cols;
+            in.read(reinterpret_cast<char*> (&rows), sizeof(int));
+            in.read(reinterpret_cast<char*> (&cols), sizeof(int));
+            double* buffer = new double[rows * cols];
+            in.read(reinterpret_cast<char*> (buffer), rows * cols * sizeof(double));
+            wieght[i][j] = Eigen::Map<Eigen::MatrixXd>(buffer, rows, cols);
+            delete[] buffer;
+        }
+    }
+    in.close();
 }
 
 int Network::GetLayerSize(int l){

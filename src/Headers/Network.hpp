@@ -99,6 +99,8 @@ class Network{
             delta.push_back(m);
         }
     }
+    void Network::save_weight(const std::string& filename);
+    void Network::load_weight(const std::string& filename);
 
     float GetValue(int l,int i){ return layer[l](i,0); };
     float Network::GetWeight(int l,int i,int j);
