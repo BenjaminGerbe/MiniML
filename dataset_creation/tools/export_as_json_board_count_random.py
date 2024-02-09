@@ -3,7 +3,7 @@ import chess.pgn
 import json
 import random
 
-max_board_states = 10000
+max_board_states = 50000
 board_state_count = 0
 
 pgn_path = "../test_files/10k_analysed_games.pgn"
@@ -32,7 +32,10 @@ for game in all_games:
         evaluation = child.eval().relative
         turn_info["move"] = move.uci()
         turn_info["evaluation"] = str(evaluation)
-        
+
+        find = False
+      
+         
         root = child
         board.push(move)
         board_state = []
@@ -46,6 +49,7 @@ for game in all_games:
                         piece_int = int(piece)
                         # Convertion to a binary string
                         piece_bin = bin(piece_int)
+                  
                         # Removing the '0b' prefix
                         piece_bin = piece_bin[2:]
                         # Pad with zeros to make it 64 digits long
@@ -59,21 +63,27 @@ for game in all_games:
 
         board_state = [row[::-1] for row in board_state]
         board_state = [int(bit) for row in board_state for cell in row for bit in cell]
-        
-        turn_info["board_state"] = board_state
-        turns.append(turn_info)
-        
-        board_state_count += 1
+
+        for t in games:
+            if(t['evaluation'] == turn_info["evaluation"] and t['move'] == turn_info["move"]):
+                find = True;
+                break;
+            
+        if(not find):
+            turn_info["board_state"] = board_state
+            games.append(turn_info)
+            board_state_count += 1
         
         if board_state_count == max_board_states:
             break
 
-    game_info["turns"] = turns
-    games.append(game_info)
+    #game_info["turns"] = turns
+    #games.append(game_info)
     if board_state_count == max_board_states:
         break
 
 with open("../output_files/games.json", "w") as f:
-    json_string = json.dumps(games, indent=None)
-    json_string = json_string.replace('"turns','\n"turns')
+    json_string = json.dumps(games)
+    json_string = json_string.replace('"}','"}')
     f.write(json_string)
+    print("finish")

@@ -138,17 +138,18 @@ void Network::linearPropagation(float** input,int sizeInput,float** output,float
             }
             X(0,nbInput-1) = 1;
             int w  = GetLayerRealSize(GetNetworkSize()-1);  
-            float err;
+            float err = 0;
             for (int k = 0; k < w; k++)
             {
                 float value = sigmoid( layer[GetNetworkSize()-1](k,0));
-                err= output[idx][k]-value;
+                err+=std::abs( output[idx][k]-value);
                 wieght[0][k] = wieght[0][k]+(a*(output[idx][k]-value)*X); 
             }
-
             error += err/(float)w;
-            
         }
+        Error.push_back(error/max_it);
+        float t = Iter[Iter.size()-1]+1;
+        Iter.push_back(t);
     }
     else{
 
@@ -185,7 +186,18 @@ void Network::linearPropagation(float** input,int sizeInput,float** output,float
         }
 
         simulate(input[idx]);
-        
+        float err = 0;
+        for (int k = 0; k < w; k++)
+        {
+            float value = sigmoid( layer[GetNetworkSize()-1](k,0));
+            err+= std::abs(output[idx][k]-value);
+            wieght[0][k] = wieght[0][k]+(a*(output[idx][k]-value)*X); 
+        }
+
+        error += err/(float)w;
+        Error.push_back(error);
+        float t = Iter[Iter.size()-1]+1;
+        Iter.push_back(t);
     }
 
 }
