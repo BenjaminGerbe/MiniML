@@ -10,7 +10,7 @@ float Network::GetWeight(int l,int i,int j){
     return wieght[idx][i](0,j);
 }
 
-void Network::save_weight(const std::string& filename) {
+void Network::SaveWeights(const std::string& filename) {
     std::ofstream out(filename, std::ios::binary);
     for (int i = 0; i < wieght.size(); i++) {
         for (int j = 0; j < wieght[i].size(); j++) {
@@ -24,7 +24,7 @@ void Network::save_weight(const std::string& filename) {
     out.close();
 }
 
-void Network::load_weight(const std::string& filename) {
+void Network::LoadWeights(const std::string& filename) {
     std::ifstream in(filename, std::ios::binary);
     for (int i = 0; i < wieght.size(); i++) {
         for (int j = 0; j < wieght[i].size(); j++) {
