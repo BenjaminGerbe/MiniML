@@ -28,6 +28,16 @@ float MiniML::GetWeight(void* network,int i,int k,int j){
     return net->GetWeight(i,k,j);
 }
 
+void MiniML::SaveWeights(void* network, const std::string& filename) {
+    Network* net = (Network*)(network);
+    net->SaveWeights(filename);
+}
+
+void MiniML::LoadWeights(void* network, const std::string& filename) {
+    Network* net = (Network*)(network);
+    net->LoadWeights(filename);
+}
+
 float* MiniML::GetError(void* network){
     Network* net = (Network*)network;
     return net->GetError();
@@ -72,3 +82,5 @@ void MiniML::RBFPropagation(void* network,float** input,int ninput,int sizeInput
     Network* net = (Network*)network;
     net->RBFPropagation(input,ninput,sizeInput,output,learningRate,k,maxIteration);
 }
+
+
