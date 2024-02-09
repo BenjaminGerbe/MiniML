@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #ifdef  MINIML_API_EXPORTS
 #define  MINIML_API __declspec(dllexport)
 #else
@@ -21,5 +22,7 @@ namespace MiniML{
         MINIML_API float* RBFSimulate(void* network,float* input,int n,float a);
         MINIML_API float* GetError(void* network);
         MINIML_API float* GetIter(void* network);
+        MINIML_API void LoadWeights(void* network, const std::string& filename);
+        MINIML_API void SaveWeights(void* network, const std::string& filename);
     } 
 }   

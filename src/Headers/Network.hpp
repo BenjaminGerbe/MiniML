@@ -107,6 +107,8 @@ class Network{
     std::vector<Eigen::MatrixXd> GetLayer(){ return this->layer;};
     int GetNetworkSize(){ return layer.size();}
     void Network::SetWeight(int l,int i,int j,float v);
+    void Network::SaveWeights(const std::string& filename);
+    void Network::LoadWeights(const std::string& filename);
     float* simulate(float* input);
     float NetWorkProcess(int l,int j);
     void backPropagation(float** input,int sizeInput,float** output,float a,int max_it);
