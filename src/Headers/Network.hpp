@@ -5,6 +5,9 @@
 #include "../Eigen/Dense"
 #include <iostream>
 #include  <cmath>
+#include <chrono>
+#include <ctime>    
+#include <omp.h> 
 class Network{
     
     std::vector<Eigen::MatrixXd> layer; 
@@ -40,12 +43,13 @@ class Network{
         float vs =((float)nbHidden)/(float)heightHidden;
         int nbCouche = std::ceil(vs);
         int p = nbHidden;
-        for (int i = 0; i < nbCouche; i++)
+        int i =0;
+        while(p > 0)
         {
             int n = p;
-            if (p > heightHidden)
+            if (p > heightHidden-i)
             {
-                n = heightHidden;
+                n = std::max(heightHidden-i,1);
             }
 
             Eigen::MatrixXd hidden(n+1,1);//add one if he need bias
@@ -67,6 +71,7 @@ class Network{
             hidden(n,0) = 1;
             wieght.push_back(layerweight);
             layer.push_back(hidden);
+            i++;
         }
         
         // and the final layer the output
@@ -95,7 +100,6 @@ class Network{
             {
                 m(j,0) = 0;
             }
-            std::cout << m << std::endl;
             delta.push_back(m);
         }
     }
@@ -118,6 +122,6 @@ class Network{
     float* GetError(){return &this->Error[0];}
     float* GetItr(){return &this->Iter[0];}
     int GetSizeError(){return this->Error.size();}
-    void SimulateRBF(float* input,int size,float a);
+    float* SimulateRBF(float* input,int size,float a);
     void LLoyd(int size,int ksize);
 };

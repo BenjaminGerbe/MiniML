@@ -29,13 +29,11 @@ for game in all_games:
         child = root.variation(0)
         if child.eval() is None:
             break
-        evaluation = child.eval().relative
+        evaluation = child.eval().pov(chess.WHITE)
         turn_info["move"] = move.uci()
         turn_info["evaluation"] = str(evaluation)
 
-        find = False
-      
-         
+        find = False   
         root = child
         board.push(move)
         board_state = []

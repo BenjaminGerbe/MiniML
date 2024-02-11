@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <fstream>
 
+
 float Network::GetWeight(int l,int i,int j){
     int idx = l-1; // beceause the layer of the input is not added
     if(idx < 0 || idx >= GetNetworkSize()){
@@ -68,6 +69,7 @@ float* Network::simulate(float* input){
     }
 
     NetWorkProcess(l-1,0);
+  
     for (int i = 0; i < GetLayerSize(l-1); i++)
     {
         if(Regression){
@@ -82,6 +84,7 @@ float* Network::simulate(float* input){
         }
         outputVector.push_back(layer[l-1](i,0));
     }
+
     return &outputVector[0];
 }
 
@@ -101,12 +104,14 @@ float Network::NetWorkProcess(int l,int j){
 void Network::backPropagation(float** input,int sizeInput,float** output,float a,int max_it){
     
     float error = 0.0;
+   
     for (int it = 0; it < max_it; it++)
     {
         int idx = rand() % sizeInput;
         simulate(input[idx]);
         float err=0.0f;
         int w  = GetLayerRealSize(GetNetworkSize()-1);
+        
         for (int i = 0; i <w; i++)
         {
             float value = layer[GetNetworkSize()-1](i,0);
@@ -119,6 +124,7 @@ void Network::backPropagation(float** input,int sizeInput,float** output,float a
             err+=std::abs(value - output[idx][i]);
         }
         error+= err/(float)w;
+        
         for (int i = GetNetworkSize()-2; i >= 0; i--)
         {
             for (int j = 0; j < GetLayerRealSize(i); j++)
@@ -147,7 +153,6 @@ void Network::backPropagation(float** input,int sizeInput,float** output,float a
             
         }
     }
-
     Error.push_back(error/max_it);
     float t = Iter[Iter.size()-1]+1;
     Iter.push_back(t);
@@ -234,8 +239,8 @@ void Network::linearPropagation(float** input,int sizeInput,float** output,float
 
 }
 
-void Network::SimulateRBF(float* input,int size,float a){
-    if(exempleParameter.size() == 0) return;
+float* Network::SimulateRBF(float* input,int size,float a){
+    if(exempleParameter.size() == 0) return (float*)0;
     int nbInput = size;
     Eigen::MatrixXd X(1,size);
     for (int i = 0; i < size; i++)
@@ -250,14 +255,8 @@ void Network::SimulateRBF(float* input,int size,float a){
         outputVector.push_back(v);
     }
     
-    if(input[0] == 0.5f && input[1] == 0.5f){
-        std::cout << outputVector[0];
-    }
     float v = simulate(&outputVector[0])[0];
-
-    if(input[0] == 0.5f && input[1] == 0.5f){
-        std::cout <<" == " << v << std::endl;
-    }
+    return &outputVector[0];
 }
 
 struct LLoydStructure{
@@ -340,9 +339,7 @@ void Network::LLoyd(int size,int ksize){
                 Eigen::MatrixXd vec = ( barycenter[j]-point);
                 if( vec.norm() <= minimalDistance){
                     minimalDistance = (barycenter[j]-point).norm();
-                    if(cluster[i].matrix == barycenter[j]){
-                        std::cout << i<< " == " << minimalDistance << std::endl;
-                    }
+                   
                     value = j;
                 }
             }
@@ -458,6 +455,13 @@ void Network::RBFPropagation(float** input,int sizeInput,int fLayerLength,float*
     }
     layer[0](nbInput-1,0) = 1;
     wieght[0][0](0, nbInput-1) = 0;
+
+    int idx = rand()%sizeInput;
+    float value = SimulateRBF(input[idx],fLayerLength,a)[0];
+    float err = std::abs(value - output[idx][0]);
+    Error.push_back(err);
+    float t = Iter[Iter.size()-1]+1;
+    Iter.push_back(t);
 }
 
  

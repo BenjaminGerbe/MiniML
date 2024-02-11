@@ -9,7 +9,11 @@ file(GLOB_RECURSE Classes
      "include/*.hpp"
 )
 
+find_package(OpenMP REQUIRED)
+
 include(CTest)
 enable_testing()
+
 add_library(MiniML SHARED ${Classes})
 target_compile_definitions(MiniML PRIVATE MINIML_API_EXPORTS)
+target_link_libraries(MiniML PRIVATE OpenMP::OpenMP_CXX)
