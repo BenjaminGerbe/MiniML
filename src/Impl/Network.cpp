@@ -77,7 +77,7 @@ float* Network::simulate(float* input){
             float min = std::numeric_limits<float>::min();
             float max = std::numeric_limits<float>::max();
             float v = (this->wieght[l-2][i]*layer[l-2])(0,0);
-            layer[l-1](i,0) = std::clamp(v,min,max);
+            layer[l-1](i,0) = std::clamp(v,-max,max);
         }
         else{
             layer[l-1](i,0) = sigmoid((this->wieght[l-2][i]*layer[l-2])(0,0));
